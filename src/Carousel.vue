@@ -5,14 +5,12 @@
   >
     <div
       class="VueCarousel-wrapper"
+      :style="!slideDisabledStyle && 'overflow: hidden'"
       ref="VueCarousel-wrapper"
     >
       <div
         ref="VueCarousel-inner"
-        :class="[
-          'VueCarousel-inner',
-          { 'VueCarousel-inner--center': isCenterModeEnabled }
-        ]"
+        class="VueCarousel-inner"
         :style="{
           'transform': `translate(${currentOffset}px, 0)`,
           'transition': dragging ? 'none' : transitionStyle,
@@ -29,25 +27,14 @@
       </div>
     </div>
 
-    <slot name="navigation" v-if="navigationEnabled">
-      <navigation
-        v-if="isNavigationRequired"
-        :clickTargetSize="navigationClickTargetSize"
-        :nextLabel="navigationNextLabel"
-        :prevLabel="navigationPrevLabel"
-        @navigationclick="handleNavigation"
-      />
-    </slot>
-
-    <slot name="pagination" v-if="paginationEnabled">
-      <pagination @paginationclick="goToPage($event, 'pagination')"/>
+    <slot name="pagination">
+      <pagination @navigationclick="handleNavigation" @paginationclick="goToPage($event, 'pagination')"/>
     </slot>
   </section>
 </template>
 <script>
 import autoplay from "./mixins/autoplay";
 import debounce from "./utils/debounce";
-import Navigation from "./Navigation.vue";
 import Pagination from "./Pagination.vue";
 import Slide from "./Slide.vue";
 
@@ -84,7 +71,6 @@ export default {
     this.computeCarouselWidth();
   },
   components: {
-    Navigation,
     Pagination,
     Slide
   },
@@ -122,19 +108,36 @@ export default {
       type: Boolean,
       default: false
     },
+
+    navigationArrows: {
+      type: Boolean,
+      default: false
+    },
+
+    verticallyCenterNavArrows: {
+      type: Boolean,
+      default: false
+    },
+
+    showThumbs: {
+      type: Boolean,
+      default: false
+    },
+
+    slideDisabledStyle: {
+      type: Boolean,
+      default: false
+    },
+    darkMode: {
+      type: Boolean,
+      default: false
+    },
     /**
      * Slide transition easing for adjustableHeight
      * Any valid CSS transition easing accepted
      */
     adjustableHeightEasing: {
       type: String
-    },
-    /**
-     *  Center images when the size is less than the container width
-     */
-    centerMode: {
-      type: Boolean,
-      default: false
     },
     /**
      * Slide transition easing
@@ -149,7 +152,7 @@ export default {
      */
     loop: {
       type: Boolean,
-      default: false
+      default: true
     },
     /**
      * Minimum distance for the swipe to trigger
@@ -188,34 +191,12 @@ export default {
       default: 8
     },
     /**
-     * Flag to render the navigation component
-     * (next/prev buttons)
-     */
-    navigationEnabled: {
-      type: Boolean,
-      default: false
-    },
-    /**
-     * Text content of the navigation next button
-     */
-    navigationNextLabel: {
-      type: String,
-      default: "&#9654"
-    },
-    /**
-     * Text content of the navigation prev button
-     */
-    navigationPrevLabel: {
-      type: String,
-      default: "&#9664"
-    },
-    /**
      * The fill color of the active pagination dot
      * Any valid CSS color is accepted
      */
     paginationActiveColor: {
       type: String,
-      default: "#000000"
+      default: "#0069B7"
     },
     /**
      * The fill color of pagination dots
@@ -223,7 +204,7 @@ export default {
      */
     paginationColor: {
       type: String,
-      default: "#efefef"
+      default: "#878787"
     },
     /**
      * Flag to render pagination component
@@ -262,15 +243,6 @@ export default {
     perPage: {
       type: Number,
       default: 2
-    },
-    /**
-     * Configure the number of visible slides with a particular browser width.
-     * This will be an array of arrays, ex. [[320, 2], [1199, 4]]
-     * Formatted as [x, y] where x=browser width, and y=number of slides displayed.
-     * ex. [1199, 4] means if (window <= 1199) then show 4 slides per page
-     */
-    perPageCustom: {
-      type: Array
     },
     /**
      * Resistance coefficient to dragging on the edge of the carousel
@@ -348,6 +320,7 @@ export default {
 
           this.$nextTick(() => {
             this.goToPage(val[0]);
+
           });
         } else {
           this.$nextTick(() => {
@@ -375,26 +348,7 @@ export default {
      * @return {Number} Number of slides to display
      */
     breakpointSlidesPerPage() {
-      if (!this.perPageCustom) {
-        return this.perPage;
-      }
-
-      const breakpointArray = this.perPageCustom;
-      const width = this.browserWidth;
-
-      const breakpoints = breakpointArray.sort(
-        (a, b) => (a[0] > b[0] ? -1 : 1)
-      );
-
-      // Reduce the breakpoints to entries where the width is in range
-      // The breakpoint arrays are formatted as [widthToMatch, numberOfSlides]
-      const matches = breakpoints.filter(breakpoint => width >= breakpoint[0]);
-
-      // If there is a match, the result should return only
-      // the slide count from the first matching breakpoint
-      const match = matches[0] && matches[0][1];
-
-      return match || this.perPage;
+      return this.perPage
     },
     /**
      * @return {Boolean} Can the slider move forward?
@@ -414,7 +368,7 @@ export default {
      * @return {Number} The number of slides per page to display
      */
     currentPerPage() {
-      return !this.perPageCustom || this.$isServer
+      return this.$isServer
         ? this.perPage
         : this.breakpointSlidesPerPage;
     },
@@ -423,11 +377,7 @@ export default {
      * @return {Number} Pixel value of offset to apply
      */
     currentOffset() {
-      if (this.isCenterModeEnabled) {
-        return 0;
-      } else {
-        return (this.offset + this.dragOffset) * -1;
-      }
+      return (this.offset + this.dragOffset) * -1;
     },
     isHidden() {
       return this.carouselWidth <= 0;
@@ -438,6 +388,11 @@ export default {
      * @return {Number}
      */
     maxOffset() {
+      console.log(Math.max(
+        this.slideWidth * (this.slideCount - this.currentPerPage) -
+          this.spacePadding * this.spacePaddingMaxOffsetFactor,
+        0
+      ))
       return Math.max(
         this.slideWidth * (this.slideCount - this.currentPerPage) -
           this.spacePadding * this.spacePaddingMaxOffsetFactor,
@@ -468,12 +423,6 @@ export default {
      */
     isNavigationRequired() {
       return this.slideCount <= this.currentPerPage ? false : true;
-    },
-    /**
-     * @return {Boolean} Center images when have less than min currentPerPage value
-     */
-    isCenterModeEnabled() {
-      return this.centerMode && !this.isNavigationRequired ? true : false;
     },
     transitionStyle() {
       const speed = `${this.speed / 1000}s`;
@@ -666,6 +615,7 @@ export default {
      */
     goToPage(page) {
       if (page >= 0 && page <= this.pageCount) {
+        console.log(Math.min(this.slideWidth * this.currentPerPage * page, this.maxOffset))
         this.offset = this.scrollPerPage
           ? Math.min(
               this.slideWidth * this.currentPerPage * page,
@@ -750,6 +700,8 @@ export default {
         this.onDrag,
         true
       );
+
+      // document.querySelector('.')
     },
     /**
      * Trigger actions when mouse is pressed and then moved (mouse drag)
@@ -850,7 +802,16 @@ export default {
       this.$emit("transitionStart");
     },
     handleTransitionEnd() {
+      this.handleInactiveSlideStyles()
       this.$emit("transitionEnd");
+    },
+    handleInactiveSlideStyles() {
+      const inActiveSlides = this.$children.filter((item, index) => index !== this.currentPage);
+      if (this.slideDisabledStyle) {
+        inActiveSlides.forEach((slide) => {
+          slide.$el.classList.add('dim')
+        })
+      }
     }
   },
   mounted() {
@@ -858,6 +819,8 @@ export default {
       "resize",
       debounce(this.onResize, this.refreshRate)
     );
+
+    this.handleInactiveSlideStyles();
 
     // setup the start event only if touch device or mousedrag activated
     if ((this.isTouch && this.touchDrag) || this.mouseDrag) {
@@ -883,11 +846,6 @@ export default {
     );
 
     this.$emit("mounted");
-
-    // when autoplay direction is backward start from the last slide
-    if (this.autoplayDirection === "backward") {
-      this.goToLastSlide();
-    }
   },
   beforeDestroy() {
     this.detachMutationObserver();
@@ -921,8 +879,8 @@ export default {
 
 .VueCarousel-wrapper {
   width: 100%;
+  text-align: center;
   position: relative;
-  overflow: hidden;
 }
 
 .VueCarousel-inner {
@@ -931,7 +889,8 @@ export default {
   backface-visibility: hidden;
 }
 
-.VueCarousel-inner--center {
-  justify-content: center;
+.dim {
+  transition: opacity 100ms linear;
+  opacity: 0.7;
 }
 </style>

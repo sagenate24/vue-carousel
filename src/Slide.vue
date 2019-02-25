@@ -107,13 +107,15 @@ export default {
   user-select: none;
   backface-visibility: hidden;
   -webkit-touch-callout: none;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-tap-highlight-color: rgba(8, 3, 3, 0);
   outline: none;
+  margin: 0 auto;
 }
 
 .VueCarousel-slide-adjustableHeight {
   display: table;
   flex-basis: auto;
-  width: 100%;
+
 }
+
 </style>

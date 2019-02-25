@@ -1,42 +1,27 @@
-# Vue Carousel
+# vue-Carousel-Presets
 
-[![Build Status](https://travis-ci.org/SSENSE/vue-carousel.svg?branch=master)](https://travis-ci.org/SSENSE/vue-carousel)
-[![Coverage Status](https://coveralls.io/repos/github/SSENSE/vue-carousel/badge.svg?branch=master)](https://coveralls.io/github/SSENSE/vue-carousel?branch=master)
-[![Latest Stable Version](https://img.shields.io/npm/v/vue-carousel.svg)](https://www.npmjs.com/package/vue-carousel)
-
-**WARNING: vue-carousel is at pre-alpha stage of development and may undergo significant changes.**
-
-**Feel free to submit issues and feature requests [here](https://github.com/SSENSE/vue-carousel/issues)**.
-
-**[Full documentation and examples](https://ssense.github.io/vue-carousel)**
-
-## Table of Contents
-- [Installation](#installation)
-- [Usage](#usage)
-- [Development](#development)
-- [License](#license)
-
+This is an updated version of the popular carousel package Vue-carousel.
 ## Installation
 
 ``` bash
-npm install vue-carousel
+npm install vue-carousel-preset
 ```
 
 or if you prefer yarn
 
 ``` bash
-yarn add vue-carousel
+yarn add vue-carousel-preset
 ```
 
 ## Usage
 
 ### Global
 
-You may install Vue Carousel globally:
+installing vue-carousel-preset globally:
 
 ``` js
 import Vue from 'vue';
-import VueCarousel from 'vue-carousel';
+import VueCarousel from 'vue-carousel-preset';
 
 Vue.use(VueCarousel);
 ```
@@ -47,7 +32,7 @@ This will make **&lt;carousel&gt;** and **&lt;slide&gt;** available to all compo
 Include the carousel directly into your component using import:
 
 ``` js
-import { Carousel, Slide } from 'vue-carousel';
+import { Carousel, Slide } from 'vue-carousel-preset';
 
 export default {
   ...
@@ -63,9 +48,17 @@ export default {
 | Property                    | Type    | Default | Description                                                                                                                                                                                                                                                                           |
 |:----------------------------|:--------|:--------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | adjustableHeight            | Boolean | false   | Adjust the height of the carousel for the current slide.
+
 | adjustableHeightEasing      | String  |         | Slide transition easing for adjustableHeight. Any valid CSS transition easing accepted.
-| autoplay                    | Boolean | false   | Flag to enable autoplay.                                                                                                                                                                                                                                                              |
-| autoplayDirection           | String  | forward | Sets the autoplay direction for the carousel during autoplay. By default it is forward but can also be set to backward. If an incorrect string is supplied it will default to forward.                                                                                                |
+
+| autoplay                    | Boolean | false   | Flag to enable autoplay.                    |
+
+| autoplayDirection           | String  | forward | Sets the autoplay direction for the carousel during autoplay. By default it is forward but can also be set to backward. If an incorrect string is supplied it will default to forward.                                                                                        |
+| navigationArrows            | Boolean | false   | Show navigation arrows.                     |
+| verticallyCenterNavArrows   | Boolean | false   | Show navigation arrows on the right and left of the carousel slides.                                                                                         |
+| slideDisabledStyle          | Boolean | false   | adds opacity on non disabled slides and removes overflow hidden.
+| showThumbs                  | Boolean | false   | Show Thumbnails underneath slides.           |
+| darkMode                    | Boolean | false   | Uses gray arrow svgs for the navigation arrows |
 | autoplayHoverPause          | Boolean | true    | Flag to pause autoplay on hover.                                                                                                                                                                                                                                                      |
 | autoplayTimeout             | Number  | 2000    | Time elapsed before advancing slide in autoplay.                                                                                                                                                                                                                                      |
 | centerMode                  | Boolean | false   | Center images when the size is less than the container width.                                                                                                                                                                                                                         |
@@ -75,7 +68,6 @@ export default {
 | mouseDrag                   | Boolean | true    | Flag to toggle mouse dragging.                                                                                                                                                                                                                                                        |
 | navigateTo                  | Number  | 0       | Listen for an external navigation request using this prop.                                                                                                                                                                                                                            |
 | navigationClickTargetSize   | Number  | 8       | Amount of padding to apply around the label in pixels.                                                                                                                                                                                                                                |
-| navigationEnabled           | Boolean | false   | Flag to render the navigation component (next/prev buttons).                                                                                                                                                                                                                          |
 | navigationNextLabel         | String  | ▶       | Text content of the navigation next button.                                                                                                                                                                                                                                           |
 | navigationPrevLabel         | String  | ◀       | Text content of the navigation prev button.                                                                                                                                                                                                                                           |
 | paginationActiveColor       | String  | #000000 | The fill color of the active pagination dot. Any valid CSS color is accepted.                                                                                                                                                                                                         |
@@ -85,7 +77,6 @@ export default {
 | paginationPadding           | Number  | 10      | The padding inside each pagination dot. Pixel values are accepted.                                                                                                                                                                                                                    |
 | paginationSize              | Number  | 10      | The size of each pagination dot. Pixel values are accepted.                                                                                                                                                                                                                           |
 | perPage                     | Number  | 2       | Maximum number of slides displayed on each page.                                                                                                                                                                                                                                      |
-| perPageCustom               | Array   |         | Configure the number of visible slides with a particular browser width. This will be an array of arrays, ex. [[320, 2], [1199, 4]]. Formatted as [x, y] where x=browser width, and y=number of slides displayed. Ex. [1199, 4] means if (window >= 1199) then show 4 slides per page. |
 | resistanceCoef              | Number  | 20      | Resistance coefficient to dragging on the edge of the carousel. This dictates the effect of the pull as you move towards the boundaries.                                                                                                                                              |
 | scrollPerPage               | Boolean | true    | Scroll per page, not per item.                                                                                                                                                                                                                                                        |
 | spacePadding                | Number  | 0       | Stage padding option adds left and right padding style (in pixels) onto VueCarousel-inner.                                                                                                                                                                                            |
