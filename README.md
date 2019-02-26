@@ -49,7 +49,7 @@ export default {
 |:----------------------------|:--------|:--------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | adjustableHeight            | Boolean | false   | Adjust the height of the carousel for the current slide. |
 
-| adjustableHeightEasing      | String  |         | Slide transition easing for adjustableHeight. Any valid CSS transition easing accepted.
+| adjustableHeightEasing      | String  |          Slide transition easing for adjustableHeight. Any valid CSS transition easing accepted.
                                                                                                              |
 
 | autoplay                    | Boolean | false   | Flag to enable autoplay. |
