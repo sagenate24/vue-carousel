@@ -1,4 +1,4 @@
-# vue-Carousel-Presets
+# vue-Carousel-Preset
 
 This is an updated version of the popular carousel package Vue-carousel.
 ## Installation
@@ -49,20 +49,21 @@ export default {
 |:----------------------------|:--------|:--------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | adjustableHeight            | Boolean | false   | Adjust the height of the carousel for the current slide. |
 
-| adjustableHeightEasing      | String  |         | Slide transition easing for adjustableHeight. Any valid CSS transition easing accepted. |
+| adjustableHeightEasing      | String  |         | Slide transition easing for adjustableHeight. Any valid CSS transition easing accepted.
+                                                                                                             |
 
-| autoplay                    | Boolean | false   | Flag to enable autoplay.                    |
+| autoplay                    | Boolean | false   | Flag to enable autoplay. |
 
 | autoplayDirection           | String  | forward | Sets the autoplay direction for the carousel during autoplay. By default it is forward ut can also be set to backward. If an incorrect string is supplied it will default to forward. |
-| navigationArrows            | Boolean | false   | Show navigation arrows.                     |
-| verticallyCenterNavArrows   | Boolean | false   | Show navigation arrows on the right and left of the carousel slides.     |
+| navigationArrows            | Boolean | false   | Show navigation arrows. |
+| verticallyCenterNavArrows   | Boolean | false   | Show navigation arrows on the right and left of the carousel slides. |
 | slideDisabledStyle          | Boolean | false   | adds opacity on non disabled slides and removes overflow hidden. |
-| showThumbs                  | Boolean | false   | Show Thumbnails underneath slides.           |
-| darkMode                    | Boolean | false   | Uses gray arrow svgs for the navigation arrows |
+| showThumbs                  | Boolean | false   | Show Thumbnails underneath slides. |
+| darkMode                    | Boolean | false   | Uses gray arrow svgs for the navigation arrows. |
 | autoplayHoverPause          | Boolean | true    | Flag to pause autoplay on hover.  |
-| autoplayTimeout             | Number  | 2000    | Time elapsed before advancing slide in autoplay.                                                                                                                                                                                                                                      |
-| centerMode                  | Boolean | false   | Center images when the size is less than the container width.                                                                                                                                                                                                                         |
-| easing                      | String  | ease    | Slide transition easing. Any valid CSS transition easing accepted.                                                                                                                                                                                                                    |
+| autoplayTimeout             | Number  | 2000    | Time elapsed before advancing slide in autoplay. |
+| centerMode                  | Boolean | false   | Center images when the size is less than the container width. |
+| easing                      | String  | ease    | Slide transition easing. Any valid CSS transition easing accepted. |
 | loop                        | Boolean | false   | Flag to make the carousel loop around when it reaches the end.                                                                                                                                                                                                                        |
 | minSwipeDistance            | Number  | 8       | Minimum distance for the swipe to trigger a slide advance.                                                                                                                                                                                                                            |
 | mouseDrag                   | Boolean | true    | Flag to toggle mouse dragging.                                                                                                                                                                                                                                                        |
@@ -72,12 +73,13 @@ export default {
 | navigationPrevLabel         | String  | ◀       | Text content of the navigation prev button.                                                                                                                                                                                                                                           |
 | paginationActiveColor       | String  | #000000 | The fill color of the active pagination dot. Any valid CSS color is accepted.                                                                                                                                                                                                         |
 | paginationColor             | String  | #efefef | The fill color of pagination dots. Any valid CSS color is accepted.                                                                                                                                                                                                                   |
-| paginationPosition          | String  | bottom  | The position of pagination dots. Possible values are `bottom`, `bottom-overlay`, `top` and `top-overlay`. The overlay values place the pagination component over the images.                                                                                                          |
+| paginationPosition          | String  | bottom  | The position of pagination dots. Possible values are `bottom`, `bottom-overlay`, `top` and `top-overlay`. The overlay values place the pagination component over the images.
+                                                                                                                                                                  |
 | paginationEnabled           | Boolean | true    | Flag to render pagination component.                                                                                                                                                                                                                                                  |
 | paginationPadding           | Number  | 10      | The padding inside each pagination dot. Pixel values are accepted.                                                                                                                                                                                                                    |
 | paginationSize              | Number  | 10      | The size of each pagination dot. Pixel values are accepted.                                                                                                                                                                                                                           |
 | perPage                     | Number  | 2       | Maximum number of slides displayed on each page.                                                                                                                                                                                                                                      |
-| resistanceCoef              | Number  | 20      | Resistance coefficient to dragging on the edge of the carousel. This dictates the effect of the pull as you move towards the boundaries.                                                                                                                                              |
+| resistanceCoef              | Number  | 20      | Resistance coefficient to dragging on the edge of the carousel. This dictates the effect of the pull as you move towards the boundaries.                                                                                                                                           |
 | scrollPerPage               | Boolean | true    | Scroll per page, not per item.                                                                                                                                                                                                                                                        |
 | spacePadding                | Number  | 0       | Stage padding option adds left and right padding style (in pixels) onto VueCarousel-inner.                                                                                                                                                                                            |
 | spacePaddingMaxOffsetFactor | Number  | 0       | Specify by how much should the space padding value be multiplied of, to re-arange the final slide padding.                                                                                                                                                                            |
