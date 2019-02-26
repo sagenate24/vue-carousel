@@ -47,14 +47,12 @@ export default {
 ### Configuration
 | Property                    | Type    | Default | Description                                                                                                                                                                                                                                                                           |
 |:----------------------------|:--------|:--------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| adjustableHeight            | Boolean | false   | Adjust the height of the carousel for the current slide. |
-
-| adjustableHeightEasing      | String  |          Slide transition easing for adjustableHeight. Any valid CSS transition easing accepted.
-                                                                                                             |
-
-| autoplay                    | Boolean | false   | Flag to enable autoplay. |
-
-| autoplayDirection           | String  | forward | Sets the autoplay direction for the carousel during autoplay. By default it is forward ut can also be set to backward. If an incorrect string is supplied it will default to forward. |
+| adjustableHeight            | Boolean | false   | Adjust the height of the carousel for the current slide.
+| adjustableHeightEasing      | String  |         | Slide transition easing for adjustableHeight. Any valid CSS transition easing accepted.
+| autoplay                    | Boolean | false   | Flag to enable autoplay.
+|
+| autoplayDirection           | String  | forward | Sets the autoplay direction for the carousel during autoplay. By default it is forward ut can also be set to backward. If an incorrect string is supplied it will default to forward.
+|
 | navigationArrows            | Boolean | false   | Show navigation arrows. |
 | verticallyCenterNavArrows   | Boolean | false   | Show navigation arrows on the right and left of the carousel slides. |
 | slideDisabledStyle          | Boolean | false   | adds opacity on non disabled slides and removes overflow hidden. |
