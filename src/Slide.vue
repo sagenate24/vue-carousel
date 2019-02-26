@@ -102,6 +102,9 @@ export default {
 <style>
 .VueCarousel-slide {
   flex-basis: inherit;
+  visibility: visible;
+  /* flex-basis: 100%; */
+  width: 100%;
   flex-grow: 0;
   flex-shrink: 0;
   user-select: none;

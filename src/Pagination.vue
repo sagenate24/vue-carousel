@@ -2,9 +2,9 @@
   <div
     class="VueCarousel-pagination"
     v-bind:class="{ [`VueCarousel-pagination--${paginationPositionModifierName}`]: paginationPositionModifierName }"
+    :style="`margin-top: ${carousel.paginationPadding * 2}px; margin: ${!carousel.showThumbs && '0 auto'}; `"
   >
-
-  <!-- Left nav arrow -->
+    <!-- Left nav arrow -->
     <div
       v-if="carousel.navigationArrows"
       aria-label="Previous page"
@@ -17,19 +17,25 @@
         'VueCarousel-navigation-center-prev': carousel.verticallyCenterNavArrows,
         'VueCarousel-navigation-prev': !carousel.verticallyCenterNavArrows,
       }"
-      :style="[
-        carousel.darkMode ? { background: 'url(' + leftDark + ')' } : { background: 'url(' + leftArrow + ')' },
-        carousel.paginationEnabled ? { top: 'calc(50% - 35px)' } : { top: '50%' }
-        ]"
-    ></div>
+      :style="[carousel.paginationEnabled ? { top: 'calc(50% - 35px)' } : { top: '50%' }]"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 41 41">
+        <circle
+          cx="20.5"
+          cy="20.5"
+          r="20"
+          :fill="carousel.darkMode ? '#ccc' : '#fff'"
+          :stroke="carousel.darkMode ? '#ccc' : '#888'"
+        ></circle>
+        <path
+          d="M22.22 28.54a1 1 0 0 1-.79-.36l-6.6-7.68 6.6-7.67a1.04 1.04 0 1 1 1.58 1.35l-5.43 6.33 5.43 6.32a1 1 0 0 1-.79 1.72z"
+          :fill="carousel.darkMode ? '#fff' : '#888'"
+        ></path>
+      </svg>
+    </div>
 
     <!-- Pagination dots -->
-    <div
-      v-if="carousel.paginationEnabled"
-      class="VueCarousel-dot-container"
-      role="tablist"
-      :style="`margin-top: ${carousel.paginationPadding * 2}px;`"
-    >
+    <div v-if="carousel.paginationEnabled" class="VueCarousel-dot-container" role="tablist">
       <button
         v-for="(page, index) in paginationCount"
         :key="`${page}_${index}`"
@@ -53,17 +59,15 @@
     </div>
 
     <!-- Thumbnails -->
-    <div
-      class="VueCarousel-thumbs-container"
-      v-if="carousel.showThumbs"
-    >
+    <div class="VueCarousel-thumbs-container" v-if="carousel.showThumbs">
       <img
         v-for="(image, index) in thumbNails"
         :key="index"
         v-on:click="goToPage(index)"
         class="VueCarousel-image"
         :src="image.src"
-        :alt="image.alt">
+        :alt="image.alt"
+      >
     </div>
 
     <!-- Right nav arrow -->
@@ -79,30 +83,33 @@
         'VueCarousel-navigation-next': !carousel.verticallyCenterNavArrows,
         'VueCarousel-navigation-button': !carousel.verticallyCenterNavArrows
       }"
-      :style="[
-        carousel.darkMode ? { background: 'url(' + rightDark + ')' } : { background: 'url(' + rightArrow + ')' },
-        carousel.paginationEnabled ? { top: 'calc(50% - 35px)' } : { top: '50%' }
-      ]"
-    ></div>
+      :style="[ carousel.paginationEnabled ? { top: 'calc(50% - 35px)' } : { top: '50%' }]"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 41 41">
+        <circle
+          cx="20.5"
+          cy="20.5"
+          r="20"
+          :fill="carousel.darkMode ? '#ccc' : '#fff'"
+          :stroke="carousel.darkMode ? '#ccc' : '#888'"
+        ></circle>
+        <path
+          d="M18.77 12.45a1 1 0 0 1 .79.37l6.6 7.68-6.6 7.68a1.04 1.04 0 1 1-1.58-1.35l5.43-6.32-5.43-6.33a1.05 1.05 0 0 1 .11-1.47 1.1 1.1 0 0 1 .68-.26z"
+          :fill="carousel.darkMode ? '#fff' : '#888'"
+        ></path>
+      </svg>
+    </div>
   </div>
 </template>
 
 <script>
-import rightDark from './arrow-right-dark.svg';
-import rightArrow from './arrow-right.svg';
-import leftDark from './arrow-left-dark.svg';
-import leftArrow from './arrow-left.svg';
 
 export default {
   name: "pagination",
   inject: ["carousel"],
   data() {
     return {
-      thumbNails: [],
-      rightDark: rightDark,
-      rightArrow: rightArrow,
-      leftDark: leftDark,
-      leftArrow: leftArrow
+      thumbNails: []
     }
   },
   computed: {
@@ -138,7 +145,7 @@ export default {
     }
   },
   mounted() {
-    this.thumbNails = document.getElementsByTagName('img')
+    this.thumbNails = document.querySelectorAll('.VueCarousel-slide img')
   },
   methods: {
     /**
@@ -190,8 +197,7 @@ export default {
 
 <style scoped>
 .VueCarousel-pagination {
-  width: 100%;
-  text-align: center;
+  display: inline-block;
 }
 
 .VueCarousel-pagination--top-overlay {
@@ -206,6 +212,7 @@ export default {
 
 .VueCarousel-dot-container {
   display: inline-block;
+  vertical-align: top;
   margin: 0 auto;
   padding: 0;
 }
@@ -229,7 +236,7 @@ export default {
 .VueCarousel-navigation-button {
   display: inline-block;
   box-sizing: border-box;
-  margin-bottom: -15px;
+  margin-top: 15px;
   user-select: none;
   background-color: transparent;
   cursor: pointer;
@@ -284,8 +291,9 @@ export default {
 
 .VueCarousel-thumbs-container {
   width: 100%;
+  padding: 0;
+  margin-left: 0;
   margin-top: 20px;
-  text-align: left;
 }
 
 .VueCarousel-image {
@@ -293,5 +301,4 @@ export default {
   max-width: 80px;
   margin: 0 10px;
 }
-
 </style>

@@ -3,7 +3,7 @@ const webpack = require('webpack');
 const npmCfg = require('./package.json');
 const projectRoot = path.resolve(__dirname, './');
 
-const { VueLoaderPlugin } = require('vue-loader');
+const VueLoaderPlugin = require('vue-loader/lib/plugin')
 
 const banner = [
   'vue-carousel v' + npmCfg.version,
@@ -38,6 +38,10 @@ module.exports = {
       {
         test: /\.vue$/,
         loader: 'vue-loader'
+      },
+      {
+        test: /\.svg$/,
+        loader: 'vue-svg-loader',
       },
       {
         test: /\.js$/,

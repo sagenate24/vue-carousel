@@ -388,11 +388,6 @@ export default {
      * @return {Number}
      */
     maxOffset() {
-      console.log(Math.max(
-        this.slideWidth * (this.slideCount - this.currentPerPage) -
-          this.spacePadding * this.spacePaddingMaxOffsetFactor,
-        0
-      ))
       return Math.max(
         this.slideWidth * (this.slideCount - this.currentPerPage) -
           this.spacePadding * this.spacePaddingMaxOffsetFactor,
@@ -595,6 +590,8 @@ export default {
               slot.tag.match(`^vue-component-\\d+-${this.tagName}$`) !== null
           ).length) ||
         0;
+
+        console.log(this.slideCount)
     },
     /**
      * Gets the slide at the specified index
@@ -615,7 +612,6 @@ export default {
      */
     goToPage(page) {
       if (page >= 0 && page <= this.pageCount) {
-        console.log(Math.min(this.slideWidth * this.currentPerPage * page, this.maxOffset))
         this.offset = this.scrollPerPage
           ? Math.min(
               this.slideWidth * this.currentPerPage * page,
@@ -815,6 +811,12 @@ export default {
     }
   },
   mounted() {
+
+    setTimeout(() => {
+      this.onResize();
+      this.goToPage(0);
+    }, 50);
+
     window.addEventListener(
       "resize",
       debounce(this.onResize, this.refreshRate)
@@ -844,6 +846,10 @@ export default {
       this.transitionend,
       this.handleTransitionEnd
     );
+
+    if (this.autoplayDirection === "backward") {
+      this.goToLastSlide();
+    }
 
     this.$emit("mounted");
   },
@@ -881,6 +887,7 @@ export default {
   width: 100%;
   text-align: center;
   position: relative;
+  overflow: hidden;
 }
 
 .VueCarousel-inner {
