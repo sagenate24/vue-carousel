@@ -11,7 +11,6 @@ const images = [
   "https://images.pexels.com/photos/248797/pexels-photo-248797.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
   "https://images.pexels.com/photos/248797/pexels-photo-248797.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
   "https://images.pexels.com/photos/248797/pexels-photo-248797.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-  "https://images.pexels.com/photos/248797/pexels-photo-248797.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
 ]
 
 const generateSlideImages = (createElement) => images.map((image) =>
@@ -31,6 +30,7 @@ const createContainer = (createElement, width, content) => createElement(
   {
     style: {
       width: '100%',
+      boxSizing: 'boreder-box',
       height: '100%',
       display: 'flex',
       justifyContent: 'center',

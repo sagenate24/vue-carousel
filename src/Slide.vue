@@ -9,7 +9,7 @@
       'VueCarousel-slide-center': isCenter,
       'VueCarousel-slide-adjustableHeight': isAdjustableHeight
     }"
-  >
+    :style="{ 'flex-basis': carousel.perPage ? `${100 / carousel.perPage}%` : '100%' }">
     <slot></slot>
   </div>
 </template>
@@ -25,6 +25,7 @@ export default {
   },
   inject: ["carousel"],
   mounted() {
+
     if (!this.$isServer) {
       this.$el.addEventListener("dragstart", e => e.preventDefault());
     }
@@ -101,9 +102,7 @@ export default {
 
 <style>
 .VueCarousel-slide {
-  flex-basis: inherit;
   visibility: visible;
-  /* flex-basis: 100%; */
   width: 100%;
   flex-grow: 0;
   flex-shrink: 0;
@@ -118,7 +117,11 @@ export default {
 .VueCarousel-slide-adjustableHeight {
   display: table;
   flex-basis: auto;
-
 }
 
+@media only screen and (max-width: 767px) {
+  .VueCarousel-slide {
+    flex-basis: 100% !important;
+  }
+}
 </style>

@@ -1,14 +1,14 @@
 <template>
-  <section
-    class="VueCarousel"
-    v-bind:class="{ 'VueCarousel--reverse': paginationPosition === 'top' }"
-  >
+  <section class="VueCarousel" :style="{
+      'opacity': carouselLoading ? 0 : 1,
+    }">
     <div
       class="VueCarousel-wrapper"
       :style="!slideDisabledStyle && 'overflow: hidden'"
       ref="VueCarousel-wrapper"
     >
       <div
+        v-images-loaded:on.progress="imageProgress"
         ref="VueCarousel-inner"
         class="VueCarousel-inner"
         :style="{
@@ -28,12 +28,17 @@
     </div>
 
     <slot name="pagination">
-      <pagination @navigationclick="handleNavigation" @paginationclick="goToPage($event, 'pagination')"/>
+      <pagination
+        @navigationclick="handleNavigation"
+        @paginationclick="goToPage($event, 'pagination')"
+      />
     </slot>
   </section>
 </template>
 <script>
 import autoplay from "./mixins/autoplay";
+import imagesLoaded from 'vue-images-loaded'
+import Vue from 'vue'
 import debounce from "./utils/debounce";
 import Pagination from "./Pagination.vue";
 import Slide from "./Slide.vue";
@@ -74,8 +79,13 @@ export default {
     Pagination,
     Slide
   },
+  directives: {
+    imagesLoaded
+  },
   data() {
     return {
+      carouselLoading: true,
+      loadedImages: [],
       browserWidth: null,
       carouselWidth: 0,
       currentPage: 0,
@@ -124,10 +134,16 @@ export default {
       default: false
     },
 
+    thumbSize: {
+      type: Number,
+      default: 80
+    },
+
     slideDisabledStyle: {
       type: Boolean,
       default: false
     },
+
     darkMode: {
       type: Boolean,
       default: false
@@ -219,7 +235,7 @@ export default {
      */
     paginationPadding: {
       type: Number,
-      default: 10
+      default: 15
     },
     /**
      * Configure the position for the pagination component.
@@ -368,6 +384,10 @@ export default {
      * @return {Number} The number of slides per page to display
      */
     currentPerPage() {
+      if (this.browserWidth < 768) {
+        return 1
+      }
+
       return this.$isServer
         ? this.perPage
         : this.breakpointSlidesPerPage;
@@ -390,7 +410,7 @@ export default {
     maxOffset() {
       return Math.max(
         this.slideWidth * (this.slideCount - this.currentPerPage) -
-          this.spacePadding * this.spacePaddingMaxOffsetFactor,
+        this.spacePadding * this.spacePaddingMaxOffsetFactor,
         0
       );
     },
@@ -409,7 +429,7 @@ export default {
      */
     slideWidth() {
       const width = this.carouselWidth - this.spacePadding * 2;
-      const perPage = this.currentPerPage;
+      let perPage = this.currentPerPage;
 
       return width / perPage;
     },
@@ -419,6 +439,7 @@ export default {
     isNavigationRequired() {
       return this.slideCount <= this.currentPerPage ? false : true;
     },
+
     transitionStyle() {
       const speed = `${this.speed / 1000}s`;
       const transtion = `${speed} ${this.easing} transform`;
@@ -435,6 +456,22 @@ export default {
     }
   },
   methods: {
+    imageProgress(instance, image) {
+      const numberOfImagesToLoad = instance.images.length;
+
+      if (numberOfImagesToLoad === 0) {
+        this.handleMount();
+        this.carouselLoading = false;
+      } else {
+        const result = image.isLoaded ? 'loaded' : 'broken';
+        this.loadedImages.push(image.img.src);
+
+        if (numberOfImagesToLoad === this.loadedImages.length) {
+          this.handleMount();
+          this.carouselLoading = false;
+        }
+      }
+    },
     /**
      * @return {Number} The index of the next page
      * */
@@ -535,8 +572,7 @@ export default {
      * @return {Number} Browser"s width in pixels
      */
     getBrowserWidth() {
-      this.browserWidth = window.innerWidth;
-      return this.browserWidth;
+      return this.browserWidth = window.innerWidth;
     },
     /**
      * Get the width of the carousel DOM element
@@ -546,12 +582,8 @@ export default {
       let carouselInnerElements = this.$el.getElementsByClassName(
         "VueCarousel-inner"
       );
-      for (let i = 0; i < carouselInnerElements.length; i++) {
-        if (carouselInnerElements[i].clientWidth > 0) {
-          this.carouselWidth = carouselInnerElements[i].clientWidth || 0;
-        }
-      }
-      return this.carouselWidth;
+
+      return this.carouselWidth = carouselInnerElements[0].clientWidth;
     },
     /**
      * Get the maximum height of the carousel active slides
@@ -590,8 +622,6 @@ export default {
               slot.tag.match(`^vue-component-\\d+-${this.tagName}$`) !== null
           ).length) ||
         0;
-
-        console.log(this.slideCount)
     },
     /**
      * Gets the slide at the specified index
@@ -614,9 +644,9 @@ export default {
       if (page >= 0 && page <= this.pageCount) {
         this.offset = this.scrollPerPage
           ? Math.min(
-              this.slideWidth * this.currentPerPage * page,
-              this.maxOffset
-            )
+            this.slideWidth * this.currentPerPage * page,
+            this.maxOffset
+          )
           : Math.min(this.slideWidth * page, this.maxOffset);
 
         // restart autoplay if specified
@@ -726,6 +756,7 @@ export default {
       }
     },
     onResize() {
+
       this.computeCarouselWidth();
       this.computeCarouselHeight();
 
@@ -798,60 +829,59 @@ export default {
       this.$emit("transitionStart");
     },
     handleTransitionEnd() {
-      this.handleInactiveSlideStyles()
+      if (this.slideDisabledStyle) {
+        this.handleInactiveSlideStyles();
+      }
+
       this.$emit("transitionEnd");
     },
     handleInactiveSlideStyles() {
-      const inActiveSlides = this.$children.filter((item, index) => index !== this.currentPage);
-      if (this.slideDisabledStyle) {
-        inActiveSlides.forEach((slide) => {
-          slide.$el.classList.add('dim')
-        })
-      }
-    }
-  },
-  mounted() {
+      const currentSlides = Array.prototype.slice.call(this.$el.querySelectorAll('.VueCarousel-slide'));
+      const inActiveSlides = currentSlides.filter((item, index) => index !== this.currentPage);
 
-    setTimeout(() => {
-      this.onResize();
-      this.goToPage(0);
-    }, 50);
-
-    window.addEventListener(
-      "resize",
-      debounce(this.onResize, this.refreshRate)
-    );
-
-    this.handleInactiveSlideStyles();
-
-    // setup the start event only if touch device or mousedrag activated
-    if ((this.isTouch && this.touchDrag) || this.mouseDrag) {
-      this.$refs["VueCarousel-wrapper"].addEventListener(
-        this.isTouch ? "touchstart" : "mousedown",
-        this.onStart
+      inActiveSlides.forEach((slide) => {
+        slide.classList.add('dim')
+      })
+    },
+    handleMount() {
+      window.addEventListener(
+        "resize",
+        debounce(this.onResize, this.refreshRate)
       );
-    }
 
-    this.attachMutationObserver();
-    this.computeCarouselWidth();
-    this.computeCarouselHeight();
+      if (this.slideDisabledStyle) {
+        this.handleInactiveSlideStyles();
+      }
 
-    this.transitionstart = getTransitionEnd();
-    this.$refs["VueCarousel-inner"].addEventListener(
-      this.transitionstart,
-      this.handleTransitionStart
-    );
-    this.transitionend = getTransitionEnd();
-    this.$refs["VueCarousel-inner"].addEventListener(
-      this.transitionend,
-      this.handleTransitionEnd
-    );
+      // setup the start event only if touch device or mousedrag activated
+      if ((this.isTouch && this.touchDrag) || this.mouseDrag) {
+        this.$refs["VueCarousel-wrapper"].addEventListener(
+          this.isTouch ? "touchstart" : "mousedown",
+          this.onStart
+        );
+      }
 
-    if (this.autoplayDirection === "backward") {
-      this.goToLastSlide();
-    }
+      this.attachMutationObserver();
+      this.computeCarouselWidth();
+      this.computeCarouselHeight();
 
-    this.$emit("mounted");
+      this.transitionstart = getTransitionEnd();
+      this.$refs["VueCarousel-inner"].addEventListener(
+        this.transitionstart,
+        this.handleTransitionStart
+      );
+      this.transitionend = getTransitionEnd();
+      this.$refs["VueCarousel-inner"].addEventListener(
+        this.transitionend,
+        this.handleTransitionEnd
+      );
+
+      if (this.autoplayDirection === "backward") {
+        this.goToLastSlide();
+      }
+
+      this.$emit("mounted");
+    },
   },
   beforeDestroy() {
     this.detachMutationObserver();
@@ -874,20 +904,16 @@ export default {
 </script>
 <style>
 .VueCarousel {
+  width: 100%;
   display: flex;
   flex-direction: column;
   position: relative;
-}
-
-.VueCarousel--reverse {
-  flex-direction: column-reverse;
 }
 
 .VueCarousel-wrapper {
   width: 100%;
   text-align: center;
   position: relative;
-  overflow: hidden;
 }
 
 .VueCarousel-inner {

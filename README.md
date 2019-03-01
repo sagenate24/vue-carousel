@@ -54,7 +54,8 @@ export default {
 | navigationArrows            | Boolean | false   | Show navigation arrows.
 | verticallyCenterNavArrows   | Boolean | false   | Show navigation arrows on the right and left of the carousel slides.
 | slideDisabledStyle          | Boolean | false   | adds opacity on non disabled slides and removes overflow hidden.
-| showThumbs                  | Boolean | false   | Show Thumbnails underneath carousel.
+| showThumbs                  | Boolean | false   | Show thumbnails underneath carousel.
+| thumbSize                   | Number  | 80      | width of thumbnails in pixels.
 | darkMode                    | Boolean | false   | Uses gray arrow svgs for the navigation arrows.
 | autoplayHoverPause          | Boolean | true    | Flag to pause autoplay on hover.
 | autoplayTimeout             | Number  | 2000    | Time elapsed before advancing slide in autoplay.

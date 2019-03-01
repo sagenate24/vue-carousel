@@ -6,7 +6,7 @@
   >
     <!-- Left nav arrow -->
     <div
-      v-if="carousel.navigationArrows"
+      v-if="carousel.navigationArrows && carousel.browserWidth > 767"
       aria-label="Previous page"
       :tabindex="canAdvanceBackward ? 0 : -1"
       class="VueCarousel-navigation-prev"
@@ -17,7 +17,11 @@
         'VueCarousel-navigation-center-prev': carousel.verticallyCenterNavArrows,
         'VueCarousel-navigation-prev': !carousel.verticallyCenterNavArrows,
       }"
-      :style="[carousel.paginationEnabled ? { top: 'calc(50% - 35px)' } : { top: '50%' }]"
+      :style="{
+      'opacity': carousel.carouselLoading ? 0 : 1,
+      'top': carousel.paginationEnabled ? 'calc(50% - 35px)' : '50%',
+      'margin-top': !carousel.verticallyCenterNavArrows ? `${carousel.paginationPadding * 2}px` : '0'
+      }"
     >
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 41 41">
         <circle
@@ -35,7 +39,7 @@
     </div>
 
     <!-- Pagination dots -->
-    <div v-if="carousel.paginationEnabled" class="VueCarousel-dot-container" role="tablist">
+    <div v-if="carousel.paginationEnabled || carousel.browserWidth < 768 && !carousel.showThumbs " class="VueCarousel-dot-container" role="tablist">
       <button
         v-for="(page, index) in paginationCount"
         :key="`${page}_${index}`"
@@ -64,7 +68,10 @@
         v-for="(image, index) in thumbNails"
         :key="index"
         v-on:click="goToPage(index)"
-        class="VueCarousel-image"
+        class="VueCarousel-thumb-image"
+        :style="{
+          'max-width': carousel.thumbSize && `${carousel.thumbSize}px`,
+        }"
         :src="image.src"
         :alt="image.alt"
       >
@@ -72,7 +79,7 @@
 
     <!-- Right nav arrow -->
     <div
-      v-if="carousel.navigationArrows"
+      v-if="carousel.navigationArrows && carousel.browserWidth > 767"
       aria-label="Next page"
       :tabindex="canAdvanceForward ? 0 : -1"
       class="VueCarousel-navigation-next"
@@ -83,7 +90,7 @@
         'VueCarousel-navigation-next': !carousel.verticallyCenterNavArrows,
         'VueCarousel-navigation-button': !carousel.verticallyCenterNavArrows
       }"
-      :style="[ carousel.paginationEnabled ? { top: 'calc(50% - 35px)' } : { top: '50%' }]"
+      :style="{ 'top': carousel.paginationEnabled ? 'calc(50% - 35px)' : '50%' }"
     >
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 41 41">
         <circle
@@ -125,6 +132,12 @@ export default {
         : "top";
     },
     paginationCount() {
+      let perPage = this.carousel.currentPerPage
+
+      if (this.carousel.browserWidth < 768) {
+        return this.carousel.slideCount
+      }
+
       return this.carousel && this.carousel.scrollPerPage
         ? this.carousel.pageCount
         : this.carousel.slideCount && this.carousel.currentPerPage
@@ -145,7 +158,12 @@ export default {
     }
   },
   mounted() {
-    this.thumbNails = document.querySelectorAll('.VueCarousel-slide img')
+    this.thumbNails = this.carousel.$children.filter((item) => {
+      if (item.$el.classList.contains('VueCarousel-slide')) {
+        return true
+      }
+      return false
+    }).map((item) => item.$el.childNodes[0]);
   },
   methods: {
     /**
@@ -236,7 +254,6 @@ export default {
 .VueCarousel-navigation-button {
   display: inline-block;
   box-sizing: border-box;
-  margin-top: 15px;
   user-select: none;
   background-color: transparent;
   cursor: pointer;
@@ -286,7 +303,6 @@ export default {
   height: 40px;
   width: 40px;
   transform: translateY(-50%) translateX(-100%);
-  font-family: "system";
 }
 
 .VueCarousel-thumbs-container {
@@ -296,9 +312,18 @@ export default {
   margin-top: 20px;
 }
 
-.VueCarousel-image {
+@media only screen and (max-width: 767px) {
+  .VueCarousel-center-arrows {
+    display: none;
+  }
+
+  .VueCarousel-navigation-button {
+    display: none;
+  }
+}
+
+.VueCarousel-thumb-image {
   cursor: pointer;
-  max-width: 80px;
   margin: 0 10px;
 }
 </style>

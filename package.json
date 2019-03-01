@@ -1,6 +1,6 @@
 {
   "name": "vue-carousel-preset",
-  "version": "0.3.9",
+  "version": "0.5.6",
   "description": "A flexible, responsive, touch-friendly carousel for Vue.js",
   "main": "dist/vue-carousel.min.js",
   "scripts": {
@@ -23,7 +23,8 @@
   "dependencies": {
     "global": "^4.3.2",
     "regenerator-runtime": "^0.12.1",
-    "vue": "^2.5.17"
+    "vue": "^2.5.17",
+    "vue-images-loaded": "^1.1.2"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
