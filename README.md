@@ -53,9 +53,10 @@ export default {
 | autoplayDirection           | String  | forward | Sets the autoplay direction for the carousel during autoplay. By default it is forward ut can also be set to backward. If an incorrect string is supplied it will default to forward.
 | navigationArrows            | Boolean | false   | Show navigation arrows.
 | verticallyCenterNavArrows   | Boolean | false   | Show navigation arrows on the right and left of the carousel slides.
-| slideDisabledStyle          | Boolean | false   | adds opacity on non disabled slides and removes overflow hidden.
+| slideDisabledStyle          | Boolean | false   | Add opacity on non disabled slides and removes overflow hidden.
 | showThumbs                  | Boolean | false   | Show thumbnails underneath carousel.
-| thumbSize                   | Number  | 80      | width of thumbnails in pixels.
+| thumbContainerStyle         | Object  | { marginTop: '0' } | Define styles for the thumbnails container.
+| thumbImageStyles            | Object  | { width: '80px' } | Define styles for each thumbnail.
 | darkMode                    | Boolean | false   | Uses gray arrow svgs for the navigation arrows.
 | autoplayHoverPause          | Boolean | true    | Flag to pause autoplay on hover.
 | autoplayTimeout             | Number  | 2000    | Time elapsed before advancing slide in autoplay.

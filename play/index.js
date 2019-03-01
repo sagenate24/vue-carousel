@@ -73,7 +73,7 @@ play("Carousel", module)
     h, "700", [h(Carousel, { props: {
       perPage: 1,
       paginationEnabled: false,
-      showThumbs: true
+      showThumbs: true,
     } }, generateSlideImages(h))]
   )
 )

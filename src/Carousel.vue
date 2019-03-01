@@ -134,9 +134,27 @@ export default {
       default: false
     },
 
-    thumbSize: {
-      type: Number,
-      default: 80
+    thumbContainerStyles: {
+      type: Object,
+      default: function () {
+        return {
+          marginTop: '0',
+        }
+      }
+    },
+
+    thumbImageStyles: {
+      type: Object,
+      default: function () {
+        return {
+          width: '80px'
+        }
+      }
+    },
+
+    thumbWidth: {
+      type: String,
+      default: '80px'
     },
 
     slideDisabledStyle: {

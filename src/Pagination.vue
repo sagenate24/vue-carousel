@@ -63,15 +63,16 @@
     </div>
 
     <!-- Thumbnails -->
-    <div class="VueCarousel-thumbs-container" v-if="carousel.showThumbs">
+    <div
+      v-if="carousel.showThumbs"
+      class="VueCarousel-thumbs-container"
+      :style="carousel.thumbContainerStyles">
       <img
         v-for="(image, index) in thumbNails"
         :key="index"
         v-on:click="goToPage(index)"
         class="VueCarousel-thumb-image"
-        :style="{
-          'max-width': carousel.thumbSize && `${carousel.thumbSize}px`,
-        }"
+        :style="carousel.thumbImageStyles"
         :src="image.src"
         :alt="image.alt"
       >
@@ -158,6 +159,7 @@ export default {
     }
   },
   mounted() {
+    console.log(this.carousel.thumbContainerStyles)
     this.thumbNails = this.carousel.$children.filter((item) => {
       if (item.$el.classList.contains('VueCarousel-slide')) {
         return true
