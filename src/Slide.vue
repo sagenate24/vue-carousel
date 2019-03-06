@@ -102,7 +102,6 @@ export default {
 
 <style>
 .VueCarousel-slide {
-  visibility: visible;
   width: 100%;
   flex-grow: 0;
   flex-shrink: 0;
@@ -117,6 +116,11 @@ export default {
 .VueCarousel-slide-adjustableHeight {
   display: table;
   flex-basis: auto;
+}
+
+.fade-out-slide {
+  transition: opacity 100ms linear;
+  opacity: 0;
 }
 
 @media only screen and (max-width: 767px) {

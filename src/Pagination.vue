@@ -6,7 +6,7 @@
   >
     <!-- Left nav arrow -->
     <div
-      v-if="carousel.navigationArrows && carousel.browserWidth > 767"
+      v-if="carousel.navigationArrows"
       aria-label="Previous page"
       :tabindex="canAdvanceBackward ? 0 : -1"
       class="VueCarousel-navigation-prev"
@@ -21,8 +21,7 @@
       'opacity': carousel.carouselLoading ? 0 : 1,
       'top': carousel.paginationEnabled ? 'calc(50% - 35px)' : '50%',
       'margin-top': !carousel.verticallyCenterNavArrows ? `${carousel.paginationPadding * 2}px` : '0'
-      }"
-    >
+      }">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 41 41">
         <circle
           cx="20.5"
@@ -72,6 +71,7 @@
         :key="index"
         v-on:click="goToPage(index)"
         class="VueCarousel-thumb-image"
+        :class="{ inactive: index !== carousel.currentPage}"
         :style="carousel.thumbImageStyles"
         :src="image.src"
         :alt="image.alt"
@@ -80,7 +80,7 @@
 
     <!-- Right nav arrow -->
     <div
-      v-if="carousel.navigationArrows && carousel.browserWidth > 767"
+      v-if="carousel.navigationArrows"
       aria-label="Next page"
       :tabindex="canAdvanceForward ? 0 : -1"
       class="VueCarousel-navigation-next"
@@ -159,13 +159,14 @@ export default {
     }
   },
   mounted() {
-    console.log(this.carousel.thumbContainerStyles)
     this.thumbNails = this.carousel.$children.filter((item) => {
       if (item.$el.classList.contains('VueCarousel-slide')) {
         return true
       }
       return false
     }).map((item) => item.$el.childNodes[0]);
+
+    // this.handleInactiveSlideStyles()
   },
   methods: {
     /**
@@ -174,11 +175,22 @@ export default {
      * return {void}
      */
     goToPage(index) {
-      /**
-       * @event paginationclick
-       * @type {number}
-       */
-      this.$emit("paginationclick", index);
+      if (index !== this.carousel.currentPage) {
+        if (this.carousel.showThumbs) {
+          document.querySelector('.VueCarousel-wrapper').classList.add('fade-out-slide')
+
+          setTimeout(() => {
+            this.$emit("paginationclick", index);
+          }, 250)
+
+          setTimeout(() => {
+            document.querySelector('.VueCarousel-wrapper').classList.remove('fade-out-slide');
+          }, 500);
+
+        } else {
+          this.$emit("paginationclick", index);
+        }
+      }
     },
     /**
      * Check on current dot
@@ -325,7 +337,15 @@ export default {
 }
 
 .VueCarousel-thumb-image {
-  cursor: pointer;
+  cursor: default;
   margin: 0 10px;
+  transition: opacity 200ms linear;
+  transition-delay: 200ms;
+
+}
+
+.inactive {
+  opacity: 0.5;
+  cursor: pointer;
 }
 </style>

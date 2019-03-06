@@ -1,5 +1,5 @@
 <template>
-  <section class="VueCarousel" :style="{
+  <div class="VueCarousel" :style="{
       'opacity': carouselLoading ? 0 : 1,
     }">
     <div
@@ -33,7 +33,7 @@
         @paginationclick="goToPage($event, 'pagination')"
       />
     </slot>
-  </section>
+  </div>
 </template>
 <script>
 import autoplay from "./mixins/autoplay";
@@ -57,14 +57,14 @@ const transitionEndNames = {
 };
 const getTransitionStart = () => {
   for (let name in transitionStartNames) {
-    if (name in window) {
+    if (window !== undefined && name in window) {
       return transitionStartNames[name];
     }
   }
 };
 const getTransitionEnd = () => {
   for (let name in transitionEndNames) {
-    if (name in window) {
+    if (window !== undefined && name in window) {
       return transitionEndNames[name];
     }
   }
@@ -459,7 +459,11 @@ export default {
     },
 
     transitionStyle() {
-      const speed = `${this.speed / 1000}s`;
+      let speed = `${this.speed / 1000}s`;
+
+      if (this.showThumbs) {
+        speed = '150ms'
+      }
       const transtion = `${speed} ${this.easing} transform`;
       if (this.adjustableHeight) {
         return `${transtion}, height ${speed} ${this.adjustableHeightEasing ||
@@ -513,6 +517,7 @@ export default {
      * @param  {String} direction (Optional) The direction to advance
      */
     advancePage(direction) {
+
       if (direction && direction === "backward" && this.canAdvanceBackward) {
         this.goToPage(this.getPreviousPage(), "navigation");
       } else if (
@@ -534,45 +539,6 @@ export default {
       this.$nextTick(() => {
         this.goToPage(this.pageCount);
       });
-    },
-    /**
-     * A mutation observer is used to detect changes to the containing node
-     * in order to keep the magnet container in sync with the height its reference node.
-     */
-    attachMutationObserver() {
-      const MutationObserver =
-        window.MutationObserver ||
-        window.WebKitMutationObserver ||
-        window.MozMutationObserver;
-
-      if (MutationObserver) {
-        let config = {
-          attributes: true,
-          data: true
-        };
-        if (this.adjustableHeight) {
-          config = {
-            ...config,
-            childList: true,
-            subtree: true,
-            characterData: true
-          };
-        }
-        this.mutationObserver = new MutationObserver(() => {
-          this.$nextTick(() => {
-            this.computeCarouselWidth();
-            this.computeCarouselHeight();
-          });
-        });
-        if (this.$parent.$el) {
-          let carouselInnerElements = this.$el.getElementsByClassName(
-            "VueCarousel-inner"
-          );
-          for (let i = 0; i < carouselInnerElements.length; i++) {
-            this.mutationObserver.observe(carouselInnerElements[i], config);
-          }
-        }
-      }
     },
     handleNavigation(direction) {
       this.advancePage(direction);
@@ -682,7 +648,6 @@ export default {
      */
     /* istanbul ignore next */
     onStart(e) {
-      // alert("start");
       document.addEventListener(
         this.isTouch ? "touchend" : "mouseup",
         this.onEnd,
@@ -862,10 +827,12 @@ export default {
       })
     },
     handleMount() {
-      window.addEventListener(
-        "resize",
-        debounce(this.onResize, this.refreshRate)
-      );
+      if (window !== undefined) {
+        window.addEventListener(
+          "resize",
+          debounce(this.onResize, this.refreshRate)
+        );
+      }
 
       if (this.slideDisabledStyle) {
         this.handleInactiveSlideStyles();
@@ -879,7 +846,6 @@ export default {
         );
       }
 
-      this.attachMutationObserver();
       this.computeCarouselWidth();
       this.computeCarouselHeight();
 
@@ -903,7 +869,9 @@ export default {
   },
   beforeDestroy() {
     this.detachMutationObserver();
-    window.removeEventListener("resize", this.getBrowserWidth);
+    if (window !== undefined) {
+      window.removeEventListener("resize", this.getBrowserWidth);
+    }
     this.$refs["VueCarousel-inner"].removeEventListener(
       this.transitionstart,
       this.handleTransitionStart
@@ -930,6 +898,7 @@ export default {
 
 .VueCarousel-wrapper {
   width: 100%;
+  transition: opacity 100ms linear;
   text-align: center;
   position: relative;
 }
